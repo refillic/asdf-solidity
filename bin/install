@@ -1,0 +1,94 @@
+#!/bin/sh
+
+# Installs a given version of solc.
+#
+# This procedure was adapted from solidity's installation
+# guide at:
+#
+# http://solidity.readthedocs.io/en/develop/installing-solidity.html
+
+# Attempts an install from source. This works for all
+# Non-linux platforms (macOS, FreeBSD, etc.)
+install_from_source () {
+
+  local version=$1
+  local download_dir=$2
+
+  local base_url=https://github.com/ethereum/solidity/releases/download/
+  local filename=solidity_$version.tar.gz
+  local suffix=v$version/$filename
+  local release_url=$base_url$suffix
+
+  # Download source
+  wget -O $download_dir/$filename $release_url
+
+  cd $download_dir \
+    && tar xvf $filename
+
+  local dirname=solidity_$version
+
+  if [ ! -d $dirname ] ; then
+    echo "Directory $dirname doesn't exist. Aborting"
+    exit 1
+  fi
+
+  cd $dirname \
+
+    # Install dependencies
+    && sh ./scripts/install_deps.sh \
+
+    # Build solc
+    && mkdir build \
+    && cd build \
+    && cmake .. \
+    && make \
+
+    # Install the compiled solc
+    && mkdir $download_dir/bin \
+    && cp solc/solc $download_dir/bin/ \
+
+    # Remove temporary files
+    && cd $download_dir \
+    && rm -rf $dirname \
+    && rm $filename
+
+}
+
+# Downloads the prebuilt solc binary. Only for Linux.
+install_static () {
+
+  local version=$1
+  local download_dir=$2
+
+  local base_url=https://github.com/ethereum/solidity/releases/download/
+  local filename=solc_static_linux
+  local suffix=v$version/$filename
+  local release_url=$base_url$suffix
+
+  # Download and install solc
+  mkdir bin \
+    && wget -O $download_dir/bin/solc $release_url
+  
+}
+
+case $(uname -s) in
+
+  'Linux')
+
+    install_static $ASDF_INSTALL_VERSION $ASDF_INSTALL_PATH
+    ;;
+  
+  'Darwin')
+
+    # Make sure we accept XCode's license agreement, otherwise
+    # build won't proceed
+    sudo xcodebuild -license accept
+    install_from_source $ASDF_INSTALL_VERSION $ASDF_INSTALL_PATH
+    ;;
+
+  *)
+
+    install_from_source $ASDF_INSTALL_VERSION $ASDF_INSTALL_PATH
+    ;;
+
+esac
