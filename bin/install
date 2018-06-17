@@ -33,21 +33,20 @@ install_from_source () {
   fi
 
   cd $dirname \
-    `Install dependencies` \
+    `# Install dependencies` \
     && sh ./scripts/install_deps.sh \
-    `Build solc` \
+    `# Build solc` \
     && mkdir build \
     && cd build \
     && cmake .. \
     && make \
-    `Install the compiled solc` \
+    `# Install the compiled solc` \
     && mkdir $download_dir/bin \
     && cp solc/solc $download_dir/bin/ \
-    `Remove temporary files` \
+    `# Remove temporary files` \
     && cd $download_dir \
     && rm -rf $dirname \
     && rm $filename
-
 }
 
 # Downloads the prebuilt solc binary. Only for Linux.
@@ -64,7 +63,7 @@ install_static () {
   # Download and install solc
   mkdir $download_dir/bin \
     && wget -O $download_dir/bin/solc $release_url
-  
+
 }
 
 case $(uname -s) in
