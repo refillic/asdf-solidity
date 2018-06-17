@@ -47,6 +47,7 @@ install_from_source () {
     && cd $download_dir \
     && rm -rf $dirname \
     && rm $filename
+
 }
 
 # Downloads the prebuilt solc binary. Only for Linux.
@@ -63,7 +64,7 @@ install_static () {
   # Download and install solc
   mkdir $download_dir/bin \
     && wget -O $download_dir/bin/solc $release_url
-
+  chmod +x $download_dir/bin/solc
 }
 
 case $(uname -s) in
