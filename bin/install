@@ -62,7 +62,7 @@ install_static () {
   local release_url=$base_url$suffix
 
   # Download and install solc
-  mkdir bin \
+  mkdir $download_dir/bin \
     && wget -O $download_dir/bin/solc $release_url
   
 }
