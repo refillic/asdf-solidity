@@ -57,7 +57,7 @@ install_static () {
   local download_dir=$2
 
   local base_url=https://github.com/ethereum/solidity/releases/download/
-  local filename=solc_static_linux
+  local filename=solc-static-linux
   local suffix=v$version/$filename
   local release_url=$base_url$suffix
 
